@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
+<title>ADE — Intelligent AI Assistant</title>
+
+<style>
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  background:#08090d;
+  color:#f5f5f7;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",
+  "SF Pro Text",Arial,sans-serif;
+}
+
+body{
+  overflow:hidden;
+}
+
+.app{
+  width:100%;
+  height:100dvh;
+  display:flex;
+  flex-direction:column;
+
+  background:
+    radial-gradient(
+      circle at 50% 0%,
+      rgba(142,67,255,.15),
+      transparent 35%
+    ),
+    linear-gradient(
+      180deg,
+      #11111b 0%,
+      #08090d 75%
+    );
+}
+
+
+/* HEADER */
+
+.header{
+  height:82px;
+  flex-shrink:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+
+  padding:10px 16px;
+
+  background:rgba(12,12,18,.92);
+
+  border-bottom:1px solid rgba(255,255,255,.08);
+
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:13px;
+}
+
+.logo{
+  width:62px;
+  height:62px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border-radius:21px;
+
+  font-size:34px;
+  font-weight:800;
+
+  background:
+    linear-gradient(
+      135deg,
+      #8b55ff,
+      #c63df0
+    );
+
+  box-shadow:
+    0 8px 30px
+    rgba(155,65,255,.25);
+}
+
+.brand h1{
+  margin:0;
+  font-size:29px;
+  letter-spacing:-.7px;
+}
+
+.status{
+  display:flex;
+  align-items:center;
+  gap:7px;
+
+  margin-top:4px;
+
+  color:#969aaa;
+  font-size:15px;
+}
+
+.dot{
+  width:9px;
+  height:9px;
+
+  border-radius:50%;
+
+  background:#35d69a;
+
+  box-shadow:
+    0 0 12px
+    rgba(53,214,154,.6);
+}
+
+.reset{
+  width:58px;
+  height:58px;
+
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:19px;
+
+  background:#15161e;
+
+  color:#ddd;
+
+  font-size:30px;
+
+  cursor:pointer;
+}
+
+.reset:active{
+  transform:scale(.94);
+}
+
+
+/* CHAT */
+
+.chat{
+  flex:1;
+
+  overflow-y:auto;
+
+  padding:
+    24px
+    16px
+    150px;
+
+  scroll-behavior:smooth;
+}
+
+.chat::-webkit-scrollbar{
+  display:none;
+}
+
+.message{
+  display:flex;
+  margin-bottom:22px;
+
+  animation:
+    messageIn
+    .2s
+    ease;
+}
+
+@keyframes messageIn{
+  from{
+    opacity:0;
+    transform:translateY(5px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.message.user{
+  justify-content:flex-end;
+}
+
+.avatar{
+  width:60px;
+  height:60px;
+  min-width:60px;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  margin-right:12px;
+
+  border-radius:19px;
+
+  font-size:25px;
+  font-weight:800;
+
+  background:
+    linear-gradient(
+      135deg,
+      #8b55ff,
+      #c13ce9
+    );
+}
+
+.bubble{
+  max-width:88%;
+
+  padding:
+    16px
+    18px;
+
+  border-radius:20px;
+
+  font-size:18px;
+  line-height:1.55;
+
+  white-space:pre-wrap;
+  word-break:break-word;
+}
+
+.message.ai .bubble{
+  background:#10131a;
+
+  border:
+    1px solid
+    rgba(255,255,255,.09);
+}
+
+.message.user .bubble{
+  background:
+    linear-gradient(
+      135deg,
+      #7545e8,
+      #a33cb0
+    );
+
+  border-radius:
+    21px
+    8px
+    21px
+    21px;
+}
+
+
+/* TYPING */
+
+.typing{
+  display:none;
+
+  align-items:center;
+
+  gap:5px;
+
+  margin:
+    0
+    0
+    12px
+    72px;
+}
+
+.typing.show{
+  display:flex;
+}
+
+.typing span{
+  width:7px;
+  height:7px;
+
+  border-radius:50%;
+
+  background:#aaa;
+
+  animation:
+    typing
+    1.2s
+    infinite;
+}
+
+.typing span:nth-child(2){
+  animation-delay:.15s;
+}
+
+.typing span:nth-child(3){
+  animation-delay:.3s;
+}
+
+@keyframes typing{
+  0%,60%,100%{
+    transform:translateY(0);
+    opacity:.4;
+  }
+
+  30%{
+    transform:translateY(-5px);
+    opacity:1;
+  }
+}
+
+
+/* INPUT */
+
+.input-area{
+  position:fixed;
+
+  left:0;
+  right:0;
+  bottom:0;
+
+  padding:
+    12px
+    18px
+    calc(
+      12px +
+      env(safe-area-inset-bottom)
+    );
+
+  background:
+    rgba(7,8,12,.96);
+
+  border-top:
+    1px solid
+    rgba(255,255,255,.07);
+
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+}
+
+.input-box{
+  min-height:72px;
+
+  display:flex;
+  align-items:flex-end;
+
+  gap:10px;
+
+  padding:
+    9px
+    10px
+    9px
+    18px;
+
+  border-radius:28px;
+
+  background:#12151c;
+
+  border:
+    1px solid
+    rgba(255,255,255,.11);
+}
+
+textarea{
+  flex:1;
+  min-width:0;
+
+  max-height:130px;
+
+  resize:none;
+
+  outline:none;
+  border:0;
+
+  background:transparent;
+
+  color:#fff;
+
+  font-family:inherit;
+  font-size:18px;
+  line-height:1.45;
+
+  padding:10px 0;
+}
+
+textarea::placeholder{
+  color:#747887;
+}
+
+.send{
+  width:64px;
+  height:64px;
+
+  flex-shrink:0;
+
+  display:flex;
+  align-items:center;
+  justify-content:center;
+
+  border:0;
+  border-radius:21px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #8751ff,
+      #c13be9
+    );
+
+  color:white;
+
+  font-size:35px;
+
+  cursor:pointer;
+}
+
+.send:active{
+  transform:scale(.94);
+}
+
+.send:disabled{
+  opacity:.4;
+}
+
+.warning{
+  text-align:center;
+
+  color:#555966;
+
+  font-size:13px;
+
+  margin-top:8px;
+}
+
+
+/* MOBILE */
+
+@media(max-width:500px){
+
+  .header{
+    padding:10px 14px;
+  }
+
+  .logo{
+    width:62px;
+    height:62px;
+  }
+
+  .brand h1{
+    font-size:28px;
+  }
+
+  .chat{
+    padding-left:14px;
+    padding-right:14px;
+  }
+
+  .bubble{
+    font-size:17px;
+  }
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+  <!-- HEADER -->
+
+  <header class="header">
+
+    <div class="brand">
+
+      <div class="logo">A</div>
+
+      <div>
+
+        <h1>ADE</h1>
+
+        <div class="status">
+
+          <span class="dot"></span>
+
+          Intelligent AI Assistant
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <button
+      class="reset"
+      id="reset"
+      type="button"
+    >
+      ↻
+    </button>
+
+  </header>
+
+
+  <!-- CHAT -->
+
+  <main
+    class="chat"
+    id="chat"
+  ></main>
+
+
+  <!-- TYPING -->
+
+  <div
+    class="typing"
+    id="typing"
+  >
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+
+  <!-- INPUT -->
+
+  <div class="input-area">
+
+    <div class="input-box">
+
+      <textarea
+        id="input"
+        rows="1"
+        placeholder="Message ADE..."
+        autocomplete="off"
+        spellcheck="true"
+      ></textarea>
+
+      <button
+        class="send"
+        id="send"
+        type="button"
+      >
+        ↑
+      </button>
+
+    </div>
+
+    <div class="warning">
+      ADE may make mistakes. Verify important information.
+    </div>
+
+  </div>
+
+</div>
+
+
+<!--
+=========================================================
+PUTER.JS
+=========================================================
+-->
+
+<script src="https://js.puter.com/v2/"></script>
+
+
+<script>
+
+/*
+=========================================================
+ADE SYSTEM
+=========================================================
+*/
+
+const ADE_SYSTEM = `
+
+You are ADE, a professional general-purpose AI assistant.
+
+Your job is to understand the user naturally
+and provide useful, accurate and direct answers.
+
+LANGUAGES:
+
+Understand Cebuano / Bisaya.
+
+Understand Tagalog.
+
+Understand English.
+
+Understand Taglish.
+
+Understand Bisaya-English.
+
+Understand slang.
+
+Understand abbreviations.
+
+Understand shortcuts.
+
+Understand informal spelling.
+
+Understand typos.
+
+Understand phonetic spelling.
+
+Understand casual internet language.
+
+Do not criticize the user's grammar.
+
+Understand what the user means from context.
+
+CONVERSATION:
+
+Remember the current conversation.
+
+Use previous messages as context.
+
+Follow topic changes naturally.
+
+Do not repeatedly ask unnecessary questions.
+
+Do not provide suggested question buttons.
+
+Answer directly.
+
+If enough information is available,
+do not ask another question.
+
+STYLE:
+
+Professional.
+
+Natural.
+
+Friendly.
+
+Clear.
+
+Direct.
+
+Not robotic.
+
+Match the user's language.
+
+If the user speaks Bisaya,
+respond naturally in Bisaya.
+
+If the user speaks Tagalog,
+respond naturally in Tagalog.
+
+If the user speaks English,
+respond naturally in English.
+
+CAPABILITIES:
+
+Technology.
+
+Phones.
+
+Computers.
+
+Coding.
+
+HTML.
+
+CSS.
+
+JavaScript.
+
+Web development.
+
+School.
+
+Mathematics.
+
+Science.
+
+History.
+
+Geography.
+
+Writing.
+
+Translation.
+
+English grammar.
+
+Cebuano.
+
+Tagalog.
+
+Gaming.
+
+Apps.
+
+Troubleshooting.
+
+Relationships.
+
+Everyday questions.
+
+Creative work.
+
+Problem solving.
+
+ACCURACY:
+
+Never invent facts.
+
+Never pretend to know something
+you do not know.
+
+When uncertain, clearly say so.
+
+Do not claim real-time information
+unless the model has access to it.
+
+PRIVACY:
+
+Do not access private accounts.
+
+Do not steal passwords.
+
+Do not expose private information.
+
+Do not claim to know another person's
+private thoughts.
+
+Your name is ADE.
+
+`;
+
+
+/*
+=========================================================
+ELEMENTS
+=========================================================
+*/
+
+const chat =
+  document.getElementById("chat");
+
+const input =
+  document.getElementById("input");
+
+const send =
+  document.getElementById("send");
+
+const reset =
+  document.getElementById("reset");
+
+const typing =
+  document.getElementById("typing");
+
+
+/*
+=========================================================
+CONVERSATION MEMORY
+=========================================================
+*/
+
+let conversation = [];
+
+
+/*
+=========================================================
+ADD MESSAGE
+=========================================================
+*/
+
+function addMessage(text,type){
+
+  const message =
+    document.createElement("div");
+
+  message.className =
+    "message " + type;
+
+
+  if(type === "ai"){
+
+    const avatar =
+      document.createElement("div");
+
+    avatar.className =
+      "avatar";
+
+    avatar.textContent =
+      "A";
+
+    message.appendChild(
+      avatar
+    );
+
+  }
+
+
+  const bubble =
+    document.createElement("div");
+
+  bubble.className =
+    "bubble";
+
+  bubble.textContent =
+    text;
+
+  message.appendChild(
+    bubble
+  );
+
+
+  chat.appendChild(
+    message
+  );
+
+
+  requestAnimationFrame(() => {
+
+    chat.scrollTop =
+      chat.scrollHeight;
+
+  });
+
+}
+
+
+/*
+=========================================================
+WELCOME
+=========================================================
+*/
+
+addMessage(
+  "Hi, I'm ADE. Send me anything and I'll help you.",
+  "ai"
+);
+
+
+/*
+=========================================================
+AI REQUEST
+=========================================================
+*/
+
+async function askADE(){
+
+  const messages = [
+
+    {
+      role:"system",
+      content:ADE_SYSTEM
+    },
+
+    ...conversation
+
+  ];
+
+
+  const response =
+    await puter.ai.chat(
+      messages,
+      false,
+      {
+        model:"gpt-5.6-luna",
+        normalize:true
+      }
+    );
+
+
+  if(
+    response &&
+    response.message &&
+    typeof response.message.content === "string"
+  ){
+
+    return response.message.content;
+
+  }
+
+
+  if(
+    response &&
+    typeof response.text === "string"
+  ){
+
+    return response.text;
+
+  }
+
+
+  if(
+    typeof response === "string"
+  ){
+
+    return response;
+
+  }
+
+
+  return "ADE couldn't generate a response.";
+
+}
+
+
+/*
+=========================================================
+SEND MESSAGE
+=========================================================
+*/
+
+async function sendMessage(){
+
+  const text =
+    input.value.trim();
+
+
+  if(
+    !text ||
+    send.disabled
+  ){
+
+    return;
+
+  }
+
+
+  addMessage(
+    text,
+    "user"
+  );
+
+
+  conversation.push({
+
+    role:"user",
+
+    content:text
+
+  });
+
+
+  input.value = "";
+
+  input.style.height =
+    "auto";
+
+
+  send.disabled =
+    true;
+
+  typing.classList.add(
+    "show"
+  );
+
+
+  try{
+
+    const answer =
+      await askADE();
+
+
+    conversation.push({
+
+      role:"assistant",
+
+      content:answer
+
+    });
+
+
+    typing.classList.remove(
+      "show"
+    );
+
+
+    addMessage(
+      answer,
+      "ai"
+    );
+
+
+  }catch(error){
+
+    console.error(
+      "ADE ERROR:",
+      error
+    );
+
+
+    typing.classList.remove(
+      "show"
+    );
+
+
+    let message =
+      "ADE couldn't connect right now.";
+
+
+    if(error){
+
+      if(error.message){
+
+        message +=
+          "\n\n" +
+          error.message;
+
+      }else{
+
+        message +=
+          "\n\n" +
+          String(error);
+
+      }
+
+    }
+
+
+    addMessage(
+      message,
+      "ai"
+    );
+
+  }
+
+
+  send.disabled =
+    false;
+
+  input.focus();
+
+}
+
+
+/*
+=========================================================
+SEND BUTTON
+=========================================================
+*/
+
+send.addEventListener(
+  "click",
+  sendMessage
+);
+
+
+/*
+=========================================================
+ENTER TO SEND
+SHIFT + ENTER = NEW LINE
+=========================================================
+*/
+
+input.addEventListener(
+  "keydown",
+  function(event){
+
+    if(
+      event.key === "Enter" &&
+      !event.shiftKey
+    ){
+
+      event.preventDefault();
+
+      sendMessage();
+
+    }
+
+  }
+);
+
+
+/*
+=========================================================
+AUTO RESIZE
+=========================================================
+*/
+
+input.addEventListener(
+  "input",
+  function(){
+
+    input.style.height =
+      "auto";
+
+    input.style.height =
+      Math.min(
+        input.scrollHeight,
+        130
+      ) + "px";
+
+  }
+);
+
+
+/*
+=========================================================
+NEW CHAT
+=========================================================
+*/
+
+reset.addEventListener(
+  "click",
+  function(){
+
+    conversation = [];
+
+    chat.innerHTML = "";
+
+    addMessage(
+      "New conversation started. I'm ADE.",
+      "ai"
+    );
+
+    input.focus();
+
+  }
+);
+
+</script>
+
+</body>
+</html>
